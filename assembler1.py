@@ -4,7 +4,7 @@ def binconv():
   return 0
 #gunika
 regdict={}
-instrtypes={"R":['add','sub','slt','sltu','and','or','xor','sll','srl'],"I":[],"J":[],"S":[],"B":[],"U":[]}
+instrtypes={"R","I":[],"J":[],"S":[],"B":[],"U":[]}
 def identifyinstrtype():
   #ifelse for each
   return 0
