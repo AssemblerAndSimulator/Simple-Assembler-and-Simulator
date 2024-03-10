@@ -49,16 +49,38 @@ def identifyBinstr(lst):
     lst_2=regdict(lst[2])
     bf_3=b_funct3[lst[0]]
     
-    lst_3=converttobinary(lst[3])
-    lst_3=str(lst_3)
-    if len(lst_3)<12:
-      lst_3=((12-(len(lst_3)))*'0')+lst_3
+    lst_3=binconv(lst[3])
+    lst_3=lst_3[19:31]
+    imm=lst_3
+    imm_l=imm[0]+imm[2:8]
+    imm_r=imm[8:12]+imm[1]
+    b_f=imm_l+lst_2+lst_1+bf_3+imm_r+lst_0
+    return b_f
     
   
 def identifyUinstr(lst):
   return 0
 def identifySinstr(lst):
-  return 0
+    lst_0='0100011'
+    lst_2=lst[2]
+    lst_2=str(lst_2)
+    for i in range(0,len(lst_2)):
+      if lst_1[i]=='(':
+        break
+    imm=lst_2[0:i]
+    reg=lst_2[i+1:len(lst_2)-1]
+    if lst[1] not in regdict.keys():
+      lst_1=abidict[lst[1]]
+    if reg not in regdict.keys():
+      lst_3=abidict[reg]
+
+    imm_l=imm[0:7]
+    imm_r=imm[7:]
+    funct3='010'
+    s_f=imm_l+lst_3+lst_1+funct3+imm_r+lst_0
+    return s_f
+
+
 def converttobinary():
   return 0
 
