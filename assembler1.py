@@ -24,8 +24,22 @@ def identifyinstrtype(str1):
     if str1 in instrtypes[i]:
       return i
 #khushi
-def identifyRinstr(l):
-  return 0
+def identifyRinstr(lst):
+    rlist0='0110011'
+    funct3={'add':'000', 'sub':'000', 'sll':'001', 'slt':'010', 'sltu':'011', 'xor':'100', 'srl':'101', 'or':'110', 'and':'111'}
+    rlistrd=str(regdict[lst[1]])
+    rlistr1=str(regdict[lst[2]])
+    rlistr2=str(regdict[lst[3]])
+
+    if lst[0]=='sub':
+        funct7='0100000'
+    else:
+        funct7='0000000'
+    
+    result=funct7+rlistr2+rlistr1+funct3[lst[0]]+rlistrd+rlist0
+
+    return result
+    
 def identifyIinstr(lst):
   opcodes={'lw':'0000011','addi':'0010011','sltiu':'0010011','jalr':'1100111'}
   funct3={'lw':'010','addi':'000','sltiu':'011','jalr':'000'}
