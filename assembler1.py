@@ -87,9 +87,9 @@ def identifySinstr(lst):
       lst_1=regdict(lst[1])
 
     if reg not in regdict.keys():
-      lst_3=abidict[reg]
+      lst_3=abidict(reg)
     else:
-      lst_1=regdict[lst[1]]
+      lst_1=regdict(lst[1])
 
     imm_l=imm[0:7]
     imm_r=imm[7:]
