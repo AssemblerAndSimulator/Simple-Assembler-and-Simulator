@@ -1,2 +1,4 @@
 lw t2,100(sp)
 sltiu s5,a2,10
+beq s0,s1,12
+sw t5,200(gp)
