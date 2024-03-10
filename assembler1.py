@@ -36,7 +36,15 @@ def identifyIinstr(lst):
   imm=lst[3]
   if lst[0]=='lw':
     rs1,imm=imm,rs1
-  a=binconv(int(imm))[-12:]+abidict[rs1]+funct3[opc]+abidict[rd]+opcodes[opc]
+  if rd in regdict.keys():
+    rdbin=regdict[rd]
+  else:
+    rdbin=abidict[rd]
+  if rs1 in regdict.keys():
+    rs1bin=regdict[rs1]
+  else:
+    rs1bin=abidict[rs1] 
+  a=binconv(int(imm))[-12:]+rs1bin+funct3[opc]+rdbin+opcodes[opc]
   return a
 
 def identifyJinstr(lst):
