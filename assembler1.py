@@ -45,8 +45,15 @@ def identifyJinstr(lst):
 def identifyBinstr(lst):
     b_funct3={'beq':'000','bne':'001','blt':'100','bge':'101','bltu':'110','bgeu':'111'}
     lst_0='1100011'
-    lst_1=regdict(lst[1])
-    lst_2=regdict(lst[2])
+    if lst[1] in regdict.keys():
+      lst_1=regdict(lst[1])
+    else:
+      lst_1=abidict(lst[1])
+    
+    if lst[2] in regdict.keys():
+      lst_2=regdict(lst[2])
+    else:
+      lst_2=abidict(lst[2])
     bf_3=b_funct3[lst[0]]
     
     lst_3=binconv(lst[3])
