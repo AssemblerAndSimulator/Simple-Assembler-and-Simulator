@@ -79,8 +79,9 @@ def identifySinstr(lst):
     lst_0='0100011'
     lst_2=lst[2]
     lst_2=str(lst_2)
-    imm=lst[2]
-    reg=lst_2[3]
+    imm=binconv(lst[2])
+    imm=imm[20:32]
+    reg=lst[3]
     if lst[1] not in regdict.keys():
       lst_1=abidict(lst[1])
     else:
