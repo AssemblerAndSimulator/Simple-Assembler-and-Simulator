@@ -143,8 +143,11 @@ for i in mainlst:
   if i!='\n':
     newi=i.replace(","," ").replace("("," ").replace(")"," ")
     a=newi.split()
-    if a[0] not in allinstr:
+    if (a[0] not in allinstr) and (a[1] in allinstr):
       a=a[1:]
+    elif (a[0] not in allinstr) and (a[1] not in allinstr):
+      print("syntax error")
+      break
     type=identifyinstrtype(a[0])
     if type=='I':
       print(identifyIinstr(a))
