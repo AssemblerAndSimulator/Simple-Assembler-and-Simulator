@@ -1,5 +1,7 @@
 lw t2,100(sp)
 
 sltiu s5,a2,10
-beq s0,s1,12
+maybe: beq s0,s1,12
+beq zero,zero,0
 sw t5,200(gp)
+start: beq zero,zero,0

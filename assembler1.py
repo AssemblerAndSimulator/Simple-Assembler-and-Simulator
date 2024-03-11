@@ -136,25 +136,45 @@ def identifySinstr(lst):
 
 def converttobinary():
   return 0
-
-
+error=False
+writelst=[]
+vth=['beq','zero,zero,0']
 mainlst=readassembly()
-for i in mainlst:
-  if i!='\n':
-    newi=i.replace(","," ").replace("("," ").replace(")"," ")
-    a=newi.split()
-    if (a[0] not in allinstr) and (a[1] in allinstr):
-      a=a[1:]
-    elif (a[0] not in allinstr) and (a[1] not in allinstr):
-      print("syntax error")
-      break
-    type=identifyinstrtype(a[0])
-    if type=='I':
-      print(identifyIinstr(a))
-    if type=='B':
-      print(identifyBinstr(a))
-    if type=='S':
-      print(identifySinstr(a))
+b=mainlst[-1].split()
+if (b==vth or b[1:]==vth)==False:
+  print(a)
+  print ("syntax error: no virtual halt")
+  error=True
+elif ('beq zero,zero,0' in mainlst[k] for k in range(len(mainlst))):
+  print ("syntax error: incorrectly used virtual halt")
+  error=True
+else:
+  for i in mainlst[:-1]:
+    j=i.split()
+    if i!='\n':
+      newi=i.replace(","," ").replace("("," ").replace(")"," ")
+      a=newi.split()
+      if (a[0] not in allinstr) and (a[1] in allinstr):
+        a=a[1:]
+      elif (a[0] not in allinstr) and (a[1] not in allinstr):
+        print("syntax error: incorrect instruction")
+        error=True
+        break
+      type=identifyinstrtype(a[0])
+      if type=='R':
+        print(identifyRinstr(a))
+      elif type=='I':
+        print(identifyIinstr(a))
+      elif type=='B':
+        print(identifyBinstr(a))
+      elif type=='S':
+        print(identifySinstr(a))
+      elif type=='J':
+        print(identifyJinstr(a))
+      elif type=='U':
+        print(identifyUinstr(a))
+  if error==False:
+    print ("00000000000000000000000001100011")
 
 
 
