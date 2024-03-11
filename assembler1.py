@@ -111,7 +111,22 @@ def identifyBinstr(lst):
     
   
 def identifyUinstr(lst):
-  return 0
+  if lst[0]=='lui':
+    opcode = "0110111"
+  else:
+    opcode= "0010111"
+
+  imm = binconv(int(lst[2]))
+  imm_31_12 = imm[0:20]
+
+  if lst[1] in regdict.keys():
+    rd_bin = regdict[lst[1]]
+  else:
+    rd_bin = abidict[lst[1]]
+
+  u_instr = imm_31_12 + rd_bin + opcode
+  return u_instr
+
 def identifySinstr(lst):
     lst_0='0100011'
     imm=binconv(int(lst[2]))
