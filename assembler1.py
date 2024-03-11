@@ -132,49 +132,53 @@ def identifySinstr(lst):
     funct3='010'
     s_f=imm_l+lst_1+lst_3+funct3+imm_r+lst_0
     return s_f
-
-
-def converttobinary():
-  return 0
-error=False
+errorname=''
 writelst=[]
-vth=['beq','zero,zero,0']
-mainlst=readassembly()
-b=mainlst[-1].split()
-if (b==vth or b[1:]==vth)==False:
-  print(a)
-  print ("syntax error: no virtual halt")
-  error=True
-elif ('beq zero,zero,0' in mainlst[k] for k in range(len(mainlst))):
-  print ("syntax error: incorrectly used virtual halt")
-  error=True
+def final():
+  global errorname
+  error=False
+  vth=['beq','zero,zero,0']
+  mainlst=readassembly()
+  b=mainlst[-1].split()
+  if (b==vth or b[1:]==vth)==False:
+    errorname= ("syntax error: no virtual halt")
+    error=True
+  elif ('beq zero,zero,0' in mainlst[k] for k in range(len(mainlst))):
+    errorname= ("syntax error: incorrectly used virtual halt")
+    error=True
+  else:
+    for i in mainlst[:-1]:
+      j=i.split()
+      if i!='\n':
+        newi=i.replace(","," ").replace("("," ").replace(")"," ")
+        a=newi.split()
+        if (a[0] not in allinstr) and (a[1] in allinstr):
+          a=a[1:]
+        elif (a[0] not in allinstr) and (a[1] not in allinstr):
+          errorname=("syntax error: incorrect instruction")
+          error=True
+        type=identifyinstrtype(a[0])
+        if type=='R':
+          writelst.append(identifyRinstr(a)+'\n')
+        elif type=='I':
+          writelst.append(identifyIinstr(a)+'\n')
+        elif type=='B':
+          writelst.append(identifyBinstr(a)+'\n')
+        elif type=='S':
+          writelst.append(identifySinstr(a)+'\n')
+        elif type=='J':
+          writelst.append(identifyJinstr(a)+'\n')
+        elif type=='U':
+          writelst.append(identifyUinstr(a)+'\n')
+      writelst.append("00000000000000000000000001100011")
+      return error
+a=final()
+f1=open("result.txt",'w')
+if a==False:
+  f1.writelines(writelst)
 else:
-  for i in mainlst[:-1]:
-    j=i.split()
-    if i!='\n':
-      newi=i.replace(","," ").replace("("," ").replace(")"," ")
-      a=newi.split()
-      if (a[0] not in allinstr) and (a[1] in allinstr):
-        a=a[1:]
-      elif (a[0] not in allinstr) and (a[1] not in allinstr):
-        print("syntax error: incorrect instruction")
-        error=True
-        break
-      type=identifyinstrtype(a[0])
-      if type=='R':
-        print(identifyRinstr(a))
-      elif type=='I':
-        print(identifyIinstr(a))
-      elif type=='B':
-        print(identifyBinstr(a))
-      elif type=='S':
-        print(identifySinstr(a))
-      elif type=='J':
-        print(identifyJinstr(a))
-      elif type=='U':
-        print(identifyUinstr(a))
-  if error==False:
-    print ("00000000000000000000000001100011")
+  f1.write(errorname)
+f1.close()
 
 
 
