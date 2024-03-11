@@ -31,16 +31,22 @@ def identifyRinstr(lst):
     funct3={'add':'000', 'sub':'000', 'sll':'001', 'slt':'010', 'sltu':'011', 'xor':'100', 'srl':'101', 'or':'110', 'and':'111'}
     if lst[1] in regdict.keys():
       rlistrd=str(regdict[lst[1]])
-    else:
+    elif lst[1] in abidict.keys():
       rlistrd=abidict[lst[1]]
+    else:
+      error=True
     if lst[2] in regdict.keys():
       rlistr1=str(regdict[lst[2]])
-    else:
+    elif lst[2] in abidict.keys():
       rlistr1=str(abidict[lst[2]])
+    else:
+      error=True
     if lst[3] in regdict.keys():
       rlistr2=str(regdict[lst[3]])
-    else:
+    elif lst[3] in abidict.keys():
       rlistr2=str(abidict[lst[3]])
+    else:
+      error=True
 
 
     if lst[0]=='sub':
@@ -64,12 +70,16 @@ def identifyIinstr(lst):
     rs1,imm=imm,rs1
   if rd in regdict.keys():
     rdbin=regdict[rd]
-  else:
+  elif rd in abidict.keys():
     rdbin=abidict[rd]
+  else:
+    error=True
   if rs1 in regdict.keys():
     rs1bin=regdict[rs1]
-  else:
+  elif rs1 in abidict.keys():
     rs1bin=abidict[rs1] 
+  else:
+    error=True
   a=binconv(int(imm))[-12:]+rs1bin+funct3[opc]+rdbin+opcodes[opc]
   return a
 
@@ -77,8 +87,10 @@ def identifyJinstr(lst):
     jlist0='1101111'
     if lst[1] in regdict.keys():
         jlistrd=str(regdict[lst[1]])
-    else:
+    elif lst[1] in abidict.keys():
         jlistrd=str(abidict[lst[1]])
+    else:
+      error=True
 
     label=int(lst[2])
     labelbin=binconv(label)
@@ -93,13 +105,17 @@ def identifyBinstr(lst):
     lst_0='1100011'
     if lst[1] in regdict.keys():
       lst_1=regdict[lst[1]]
-    else:
+    elif lst[1] in abidict.keys():
       lst_1=abidict[lst[1]]
+    else:
+      error=True
     
     if lst[2] in regdict.keys():
       lst_2=regdict[lst[2]]
-    else:
+    elif lst[2] in abidict.keys():
       lst_2=abidict[lst[2]]
+    else:
+      error=True
     bf_3=b_funct3[lst[0]]
     
     lst_3=binconv(int(lst[3]))
@@ -122,8 +138,10 @@ def identifyUinstr(lst):
 
   if lst[1] in regdict.keys():
     rd_bin = regdict[lst[1]]
-  else:
+  elif lst[1] in abidict.keys():
     rd_bin = abidict[lst[1]]
+  else:
+    error=True
 
   u_instr = imm_31_12 + rd_bin + opcode
   return u_instr
@@ -133,26 +151,32 @@ def identifySinstr(lst):
     imm=binconv(int(lst[2]))
     imm=imm[20:32]
     reg=lst[3]
-    if lst[1] not in regdict.keys():
-      lst_1=abidict[lst[1]]
-    else:
+    if lst[1] in regdict.keys():
       lst_1=regdict[lst[1]]
+    elif lst[1] in abidict.keys():
+      lst_1=regdict[lst[1]]
+    else:
+      error=True
 
-    if reg not in regdict.keys():
+    if reg in regdict.keys():
+      lst_3=regdict[reg]
+    elif reg in abidict.keys():
       lst_3=abidict[reg]
     else:
-      lst_3=regdict[reg]
+      error=True
 
     imm_l=imm[0:7]
     imm_r=imm[7:]
     funct3='010'
     s_f=imm_l+lst_1+lst_3+funct3+imm_r+lst_0
     return s_f
+
+
 errorname=''
 writelst=[]
 def final():
-  global error
   global errorname
+  global error
   vth=['beq','zero,zero,0']
   mainlst=readassembly()
   b=mainlst[-1].split()
