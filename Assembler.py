@@ -1,9 +1,13 @@
-#import sys
+import sys
+file1=sys.argv[1]
+file2=sys.argv[2]
+
 error=False
 count=1
 labeldict={}
 def readassembly():
-  f1=open('file.txt','r')
+  global file1
+  f1=open(file1,'r')
   lst=f1.readlines()
   f1.close()
   return lst
@@ -167,7 +171,7 @@ def identifyUinstr(lst):
 
 def identifySinstr(lst):
     lst_0='0100011'
-    if (lst[2]>(2^11)-1) or (lst[2]<(-(2^11))):
+    if (int(lst[2])>(2^11)-1) or (int(lst[2])<(-(2^11))):
       error=True
 
     imm=binconv(int(lst[2]))
@@ -176,7 +180,7 @@ def identifySinstr(lst):
     if lst[1] in regdict.keys():
       lst_1=regdict[lst[1]]
     elif lst[1] in abidict.keys():
-      lst_1=regdict[lst[1]]
+      lst_1=abidict[lst[1]]
     else:
       error=True
 
@@ -247,7 +251,7 @@ def final():
     writelst.append("00000000000000000000000001100011")
     return error
 a=final()
-f1=open("result.txt",'w')
+f1=open(file2,'w')
 if a==False:
   f1.writelines(writelst)
 else:
