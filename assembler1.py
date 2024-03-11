@@ -140,17 +140,18 @@ def converttobinary():
 
 mainlst=readassembly()
 for i in mainlst:
-  newi=i.replace(","," ").replace("("," ").replace(")"," ")
-  a=newi.split()
-  if a[0] not in allinstr:
-    a=a[1:]
-  type=identifyinstrtype(a[0])
-  if type=='I':
-    print(identifyIinstr(a))
-  if type=='B':
-    print(identifyBinstr(a))
-  if type=='S':
-    print(identifySinstr(a))
+  if i!='\n':
+    newi=i.replace(","," ").replace("("," ").replace(")"," ")
+    a=newi.split()
+    if a[0] not in allinstr:
+      a=a[1:]
+    type=identifyinstrtype(a[0])
+    if type=='I':
+      print(identifyIinstr(a))
+    if type=='B':
+      print(identifyBinstr(a))
+    if type=='S':
+      print(identifySinstr(a))
 
 
 
