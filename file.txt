@@ -1,7 +1,9 @@
-lw t2,100(sp)
-
-sltiu s5,a2,10
-maybe: beq s0,s1,12
-beq zero,zero,0
-sw t5,200(gp)
-start: beq zero,zero,0
+start: lui t0,100
+addi t1,t0,-50
+bge t1,zero,end
+bltu t2,t1,start
+addi t2,t1,20
+add t3,t1,t2
+jal gp,-512
+jalr t4,t0,0
+end: beq zero,zero,0

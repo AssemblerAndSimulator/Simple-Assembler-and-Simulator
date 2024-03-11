@@ -1,4 +1,6 @@
 error=False
+count=1
+labeldict={}
 def readassembly():
   f1=open('file.txt','r')
   lst=f1.readlines()
@@ -71,7 +73,7 @@ def identifyIinstr(lst):
 
   if lst[0]=='lw':
     rs1,imm=imm,rs1
-  if (imm>((2^11)-1)) or (imm<(-(2^11))):
+  if (int(imm)>((2^11)-1)) or (int(imm)<(-(2^11))):
     error=True
   if rd in regdict.keys():
     rdbin=regdict[rd]
@@ -90,7 +92,7 @@ def identifyIinstr(lst):
 
 def identifyJinstr(lst):
     jlist0='1101111'
-    if (lst[2]>((2^20)-1)) or (lst[2]<(-(2^20))):
+    if (int(lst[2])>((2^20)-1)) or (int(lst[2])<(-(2^20))):
       error=True
 
     if lst[1] in regdict.keys():
@@ -111,7 +113,9 @@ def identifyJinstr(lst):
 def identifyBinstr(lst):
     b_funct3={'beq':'000','bne':'001','blt':'100','bge':'101','bltu':'110','bgeu':'111'}
     lst_0='1100011'
-    if (lst[3]>(2^12)-1) or (lst[3]<(-(2^12))):
+    if (((lst[3].isdigit() or (lst[3][0]=='-' and lst[3][1:].isdigit())))==False):
+      lst[3]=labeldict[lst[3]]-count
+    if (int(lst[3])>(2**12)-1) or (int(lst[3])<(-(2**12))):
       error=True
     
     if lst[1] in regdict.keys():
@@ -144,7 +148,7 @@ def identifyUinstr(lst):
     opcode = "0110111"
   else:
     opcode= "0010111"
-  if (lst[2]>((2^31)-1)) or (lst[2]<(-(2^31))):
+  if (int(lst[2])>((2**31)-1)) or (int(lst[2])<(-(2**31))):
     error=True
   
   imm = binconv(int(lst[2]))
@@ -194,23 +198,34 @@ writelst=[]
 def final():
   global errorname
   global error
+  global count
   vth=['beq','zero,zero,0']
   mainlst=readassembly()
   b=mainlst[-1].split()
+  for i in mainlst:
+      j=i.split()
+      if i!='\n':
+        newi=i.replace(","," ").replace("("," ").replace(")"," ")
+        a=newi.split()
+        if (a[0] not in allinstr) and (a[1] in allinstr):
+          labeldict[a[0][:-1]]=count
+
   if (b==vth or b[1:]==vth)==False:
     errorname= ("syntax error: no virtual halt")
     error=True
-  elif ('beq zero,zero,0' in mainlst[k] for k in range(len(mainlst))):
-    errorname= ("syntax error: incorrectly used virtual halt")
-    error=True
   else:
     for i in mainlst[:-1]:
+      if 'beq,zero,zero,0' in i:
+        errorname= ("syntax error: incorrectly used virtual halt")
+        error=True 
+        break
       j=i.split()
       if i!='\n':
         newi=i.replace(","," ").replace("("," ").replace(")"," ")
         a=newi.split()
         if (a[0] not in allinstr) and (a[1] in allinstr):
           a=a[1:]
+          labeldict[a[0]]=count
         elif (a[0] not in allinstr) and (a[1] not in allinstr):
           errorname=("syntax error: incorrect instruction")
           error=True
@@ -227,8 +242,9 @@ def final():
           writelst.append(identifyJinstr(a)+'\n')
         elif type=='U':
           writelst.append(identifyUinstr(a)+'\n')
-      writelst.append("00000000000000000000000001100011")
-      return error
+        count+=1
+    writelst.append("00000000000000000000000001100011")
+    return error
 a=final()
 f1=open("result.txt",'w')
 if a==False:
