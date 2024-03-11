@@ -72,7 +72,19 @@ def identifyIinstr(lst):
   return a
 
 def identifyJinstr(lst):
-  return 0
+    jlist0='1101111'
+    if lst[1] in regdict.keys():
+        jlistrd=str(regdict[lst[1]])
+    else:
+        jlistrd=str(abidict[lst[1]])
+
+    label=int(lst[2])
+    labelbin=binconv(label)
+    x=labelbin[11:31]
+    imm=x[0]+x[10:20]+x[9]+x[1:9]
+
+    return imm+jlistrd+jlist0
+
 #kanu
 def identifyBinstr(lst):
     b_funct3={'beq':'000','bne':'001','blt':'100','bge':'101','bltu':'110','bgeu':'111'}
