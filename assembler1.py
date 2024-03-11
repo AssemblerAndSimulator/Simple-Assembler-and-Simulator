@@ -1,3 +1,4 @@
+error=False
 def readassembly():
   f1=open('file.txt','r')
   lst=f1.readlines()
@@ -150,8 +151,8 @@ def identifySinstr(lst):
 errorname=''
 writelst=[]
 def final():
+  global error
   global errorname
-  error=False
   vth=['beq','zero,zero,0']
   mainlst=readassembly()
   b=mainlst[-1].split()
