@@ -3,7 +3,8 @@ file1=sys.argv[1]
 file2=sys.argv[2]
 
 error=False
-count=1
+count=0
+icount=0
 labeldict={}
 def readassembly():
   global file1
@@ -97,6 +98,8 @@ def identifyIinstr(lst):
 
 def identifyJinstr(lst):
     jlist0='1101111'
+    if (((lst[2].isdigit() or (lst[2][0]=='-' and lst[2][1:].isdigit())))==False):
+      lst[2]=labeldict[lst[2]]-icount
     if (int(lst[2])>((2^20)-1)) or (int(lst[2])<(-(2^20))):
       error=True
 
@@ -119,7 +122,8 @@ def identifyBinstr(lst):
     b_funct3={'beq':'000','bne':'001','blt':'100','bge':'101','bltu':'110','bgeu':'111'}
     lst_0='1100011'
     if (((lst[3].isdigit() or (lst[3][0]=='-' and lst[3][1:].isdigit())))==False):
-      lst[3]=labeldict[lst[3]]-count
+      lst[3]=labeldict[lst[3]]-icount
+
     if (int(lst[3])>(2**12)-1) or (int(lst[3])<(-(2**12))):
       error=True
     
@@ -201,6 +205,7 @@ def identifySinstr(lst):
 errorname=''
 writelst=[]
 def final():
+  global icount
   global errorname
   global error
   global count
@@ -210,6 +215,7 @@ def final():
   for i in mainlst:
       j=i.split()
       if i!='\n':
+        count+=1
         newi=i.replace(","," ").replace("("," ").replace(")"," ")
         a=newi.split()
         if (a[0] not in allinstr) and (a[1] in allinstr):
@@ -219,7 +225,7 @@ def final():
     errorname= ("syntax error: no virtual halt")
     error=True
   else:
-    for i in mainlst[:-1]:
+    for icount,i in enumerate(mainlst[:-1]):
       if 'beq,zero,zero,0' in i:
         errorname= ("syntax error: incorrectly used virtual halt")
         error=True 
@@ -228,12 +234,11 @@ def final():
       if i!='\n':
         newi=i.replace(","," ").replace("("," ").replace(")"," ")
         a=newi.split()
-        if (a[0] not in allinstr) and (a[1] in allinstr):
-          a=a[1:]
-          labeldict[a[0]]=count
-        elif (a[0] not in allinstr) and (a[1] not in allinstr):
+        if (a[0] not in allinstr) and (a[1] not in allinstr):
           errorname=("syntax error: incorrect instruction")
           error=True
+        if a[1] in allinstr:
+          a=a[1:]
         type=identifyinstrtype(a[0])
         if type=='R':
           writelst.append(identifyRinstr(a)+'\n')
@@ -247,7 +252,6 @@ def final():
           writelst.append(identifyJinstr(a)+'\n')
         elif type=='U':
           writelst.append(identifyUinstr(a)+'\n')
-        count+=1
     writelst.append("00000000000000000000000001100011")
     return error
 a=final()
@@ -256,6 +260,7 @@ if a==False:
   f1.writelines(writelst)
 else:
   f1.write(errorname)
+print (labeldict)
 f1.close()
 
 
