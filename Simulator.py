@@ -245,6 +245,33 @@ def Jtype(binaryline):
     opcode=binaryline[-7:]
     jal(rd,imm)
     
+#---------Utype instructions-----------
+def lui(rd, imm):
+  bin_pc = format(pc, '032b')
+  regabidict['temp']=bin_pc
+  addi(rd, 'temp', imm)
+  del regabidict['temp']
+
+def auipc(rd, imm):
+  regabidict[rd] = imm
+
+
+def Utype(binaryline):
+  rd = binaryline[-12:-7]
+  imm = binaryline[-32:-12]
+
+  if imm[0] == '0':
+    imm = '000000000000' + imm
+  elif imm[0] == '1':
+    imm = '111111111111' + imm
+
+  if binaryline[:7] == '0110111':
+    lui(rd, imm)
+  elif binaryline[:7] == '0010111':
+    auipc(rd, imm)
+
+    
+
     
   
 
