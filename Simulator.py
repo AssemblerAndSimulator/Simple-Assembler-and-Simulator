@@ -170,7 +170,17 @@ def jalr(rd,x6,imm):
   
   
   return
+#------------------------B type---------------------------------------
+def beq(rs1, rs2, imm):
+  if regabidict[rs1] == regabidict[rs2]:
+    global pc
+    pc = pc + bin_decimal(imm) // 4
 
+
+def bne(rs1, rs2, imm):
+  if regabidict[rs1] != regabidict[rs2]:
+    global pc
+    pc = pc + bin_decimal(imm) // 4
 def Rtype(binaryline):
   funct3 = binaryline[-15:-12]
   funct7 = binaryline[:7]
@@ -215,30 +225,25 @@ def Utype(binaryline):
     rd=regabdict[binaryline[-12:-7]]
     opcode=binaryline[-7:]
     opdict={'0110111':lui, '0010111':auipc}
-    if opcode in opdict:
-        return opdict[opcode](rd, imm)
+    opdict[opcode](rd, imm)
 def Btype(binaryline):
-    imm=binaryline[0]+binaryline[-8]+binaryline[1:6]+binaryline[-12]+binary[-11:-7]+binary[6:11]+'0'
+    imm=binaryline[0]+binaryline[-8]+binaryline[1:7]+binaryline[-12:-7]
     rs1=regabidict[binaryline[-20:-15]]
-    rs2=regabidict[regabidict[-25:-20]]
+    rs2=regabidict[binaryline[-25:-20]]
     funct3=binaryline[-15:-12]
     opcode=binaryline[-7:]
     funct3dict={
         '000': beq,
         '001': bne,
         '100': bge,
-        '101': bgeu,
         '110': blt,
-        '111': bltu
     }
-    if funct3 in funct3dict:
-        return funct3dict[funct3](rs1, rs2, imm)
+    funct3dict[funct3](rs1, rs2, imm)
 def Jtype(binaryline):
-    imm=binaryline[0]+binaryline[-20:-11]+binary[-21]+binaryline[-30:-20]+binaryline[-31]
+    imm=binaryline[0]+binaryline[-20:-12]+binary[-21]+binaryline[1:12]
+    rd=binaryline[-12:-7]
     opcode=binaryline[-7:]
-    opdict={'1101111':jal}
-    if opcode in opdict:
-        return opdict[opcode](imm}
+    jal(rd,imm)
     
     
   
