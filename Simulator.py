@@ -42,7 +42,8 @@ regabidict = {
     't5': '00000000000000000000000000000000',
     't6': '00000000000000000000000000000000'
 }
-#abidict={'00000': 'zero', '00001': 'ra', '00010': 'sp', '00011': 'gp', '00100': 'tp', '00101': 't0', '00110': 't1', '00111': 't2', '01000': 'fp', '01001': 's1', '01010': 'a0', '01011': 'a1', '01100': 'a2', '01101': 'a3', '01110': 'a4', '01111': 'a5', '10000': 'a6', '10001': 'a7', '10010': 's2', '10011': 's3', '10100': 's4', '10101': 's5', '10110': 's6', '10111': 's7', '11000': 's8', '11001': 's9', '11010': 's10', '11011': 's11', '11100': 't3', '11101': 't4', '11110': 't5', '11111': 't6'}
+abidict={'00000': 'zero', '00001': 'ra', '00010': 'sp', '00011': 'gp', '00100': 'tp', '00101': 't0', '00110': 't1', '00111': 't2', '01000': 'fp', '01001': 's1', '01010': 'a0', '01011': 'a1', '01100': 'a2', '01101': 'a3', '01110': 'a4', '01111': 'a5', '10000': 'a6', '10001': 'a7', '10010': 's2', '10011': 's3', '10100': 's4', '10101': 's5', '10110': 's6', '10111': 's7', '11000': 's8', '11001': 's9', '11010': 's10', '11011': 's11', '11100': 't3', '11101': 't4', '11110': 't5', '11111': 't6'}
+memory_add={}
 
 def bin_decimal(bin):
   dec = 0
@@ -181,6 +182,36 @@ def bne(rs1, rs2, imm):
   if regabidict[rs1] != regabidict[rs2]:
     global pc
     pc = pc + bin_decimal(imm) // 4
+
+
+
+#------------------------------Utype ---------------------------------
+def lui(rd, imm):
+  bin_pc = format(pc, '032b')
+  regabidict['temp']=bin_pc
+  addi(rd, 'temp', imm)
+  del regabidict['temp']
+
+def auipc(rd, imm):
+  regabidict[rd] = imm
+
+#-----------------------------S type--------------------------------------
+def sw(rs2,rs1,imm):
+  imm = (32 - len(imm)) * imm[0] + imm
+  rs2data = regabidict[rs1] + imm
+  memory_add[rs2data]=regabidict[rs2]
+  return
+
+#-----------------------------JType-----------------------------------------
+def jal(rd,imm):
+  imm = (32 - len(imm)) * imm[0] + imm
+  return
+
+
+#===========================================================================
+#===========================================================================
+
+
 def Rtype(binaryline):
   funct3 = binaryline[-15:-12]
   funct7 = binaryline[:7]
@@ -205,8 +236,8 @@ def Rtype(binaryline):
     funct3dict[funct3](rs1, rs2, rd)
 
 
-xor('a1', 'a0', 'a2')
-print(regabidict['a2'])
+#xor('a1', 'a0', 'a2')
+#print(regabidict['a2'])
 #------------------
 def Itype(binaryline):
   imm=binaryline[:12]
@@ -214,18 +245,17 @@ def Itype(binaryline):
   rd=binaryline[20:25]
   opcode=binaryline[25:]
   opdict={'0000011':lw,'0010011':addi,'1100111':jalr}
+#---------------------
+
 def Stype(binaryline):
     imm=binaryline[:7]+binaryline[-12:-7]
-    rs1=regabdict[binaryline[-20:-15]]
-    rs2=regabdict[binaryline[-25:-20]]
+    rs1=regabidict[binaryline[-20:-15]]
+    rs2=regabidict[binaryline[-25:-20]]
     opcode=binaryline[-7:]
     sw(rs2, rs1, imm)
-def Utype(binaryline):
-    imm=binaryline[:20]
-    rd=regabdict[binaryline[-12:-7]]
-    opcode=binaryline[-7:]
-    opdict={'0110111':lui, '0010111':auipc}
-    opdict[opcode](rd, imm)
+
+#---------------------
+
 def Btype(binaryline):
     imm=binaryline[0]+binaryline[-8]+binaryline[1:7]+binaryline[-12:-7]
     rs1=regabidict[binaryline[-20:-15]]
@@ -239,23 +269,15 @@ def Btype(binaryline):
         '110': blt,
     }
     funct3dict[funct3](rs1, rs2, imm)
+
+#---------------------
 def Jtype(binaryline):
-    imm=binaryline[0]+binaryline[-20:-12]+binary[-21]+binaryline[1:12]
+    imm=binaryline[0]+binaryline[-20:-12]+binaryline[-21]+binaryline[1:12]
     rd=binaryline[-12:-7]
     opcode=binaryline[-7:]
     jal(rd,imm)
     
-#---------Utype instructions-----------
-def lui(rd, imm):
-  bin_pc = format(pc, '032b')
-  regabidict['temp']=bin_pc
-  addi(rd, 'temp', imm)
-  del regabidict['temp']
-
-def auipc(rd, imm):
-  regabidict[rd] = imm
-
-
+#---------------------
 def Utype(binaryline):
   rd = binaryline[-12:-7]
   imm = binaryline[-32:-12]
