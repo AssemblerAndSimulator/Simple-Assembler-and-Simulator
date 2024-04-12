@@ -159,12 +159,12 @@ def addi(rd,rs1,imm):
   add(rd,rs1,rd)
   return
 
+
 def lw(rd,rs1,imm):
   addi(rd,rs1,imm)
-  
-  
-  return
-  
+  regabidict[rd]=memory_add[rd]
+  return 
+
 
 def jalr(rd,x6,imm):
   
@@ -206,8 +206,9 @@ def auipc(rd, imm):
 #-----------------------------S type--------------------------------------
 def sw(rs2,rs1,imm):
   imm = (32 - len(imm)) * imm[0] + imm
-  rs2data = regabidict[rs1] + imm
-  memory_add[rs2data]=regabidict[rs2]
+  addi('temp',rs1, imm)
+  regabidict[rs2]=memory_add['temp']
+  del regabidict['temp']
   return
 
 #-----------------------------JType-----------------------------------------
