@@ -185,13 +185,13 @@ def bne(rs1, rs2, imm):
 
 def blt(rs1, rs2, imm):
     if regabidict[rs1] < regabidict[rs2]:
-    global pc
-    pc = pc + bin_decimal(imm) // 4
+      global pc
+      pc = pc + bin_decimal(imm) // 4
 
 def bge(rs1, rs2, imm):
     if regabidict[rs1] > regabidict[rs2]:
-    global pc
-    pc = pc + bin_decimal(imm) // 4
+      global pc
+      pc = pc + bin_decimal(imm) // 4
 
 #------------------------------Utype ---------------------------------
 def lui(rd, imm):
@@ -299,7 +299,27 @@ def Utype(binaryline):
     lui(rd, imm)
   elif binaryline[:7] == '0010111':
     auipc(rd, imm)
-
+file1='file.txt'
+file2='result.txt'
+f1=open(file1,'r')
+mainlst=f1.readlines()
+for i in range(len(mainlst)):
+  mainlst[i]=mainlst[i].strip()
+f1.close()
+for i in mainlst:
+  type=instrtype(mainlst[i])
+  if type=='R':
+    Rtype(mainlst[i])
+  elif type=='I':
+    Itype(mainlst[i])
+  elif type=='S':
+    Stype(mainlst[i])
+  elif type=='B':
+    Btype(mainlst[i])
+  elif type=='U':
+    Utype(mainlst[i])
+  elif type=='J':
+    Jtype(mainlst[i])
     
 
     
