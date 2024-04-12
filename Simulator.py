@@ -322,6 +322,35 @@ for i in mainlst:
     Jtype(mainlst[i])
     
 
+
+file1='file.txt'
+file2='result.txt'
+f1=open(file1,'r')
+mainlst=f1.readlines()
+for i in range(len(mainlst)):
+  mainlst[i]=mainlst[i].strip()
+f1.close()
+while mainlst[pc]!='00000000000000000000000001100011':
+  type=instrtype(mainlst[i])
+  if type=='R':
+    Rtype(mainlst[i])
+  elif type=='I':
+    Itype(mainlst[i])
+  elif type=='S':
+    Stype(mainlst[i])
+  elif type=='B':
+    Btype(mainlst[i])
+  elif type=='U':
+    Utype(mainlst[i])
+  elif type=='J':
+    Jtype(mainlst[i])
+  pc+=1
+f2=open(file2,'w')
+finallist=[]
+for i in regabidict:
+  finallist.append(regabidict[i]+'\n')
+f2.writelines(finallist)
+f2.close()
     
   
 
