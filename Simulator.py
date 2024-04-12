@@ -183,7 +183,15 @@ def bne(rs1, rs2, imm):
     global pc
     pc = pc + bin_decimal(imm) // 4
 
+def blt(rs1, rs2, imm):
+    if regabidict[rs1] < regabidict[rs2]:
+    global pc
+    pc = pc + bin_decimal(imm) // 4
 
+def bge(rs1, rs2, imm):
+    if regabidict[rs1] > regabidict[rs2]:
+    global pc
+    pc = pc + bin_decimal(imm) // 4
 
 #------------------------------Utype ---------------------------------
 def lui(rd, imm):
