@@ -1,5 +1,5 @@
 global pc
-pc=1
+pc=0
 opcodedict = {
     'R': ['0110011'],
     'I': ['0000011', '0010011', '1100111'],
@@ -257,8 +257,8 @@ def Itype(binaryline):
 
 def Stype(binaryline):
     imm=binaryline[:7]+binaryline[-12:-7]
-    rs1=regabidict[binaryline[-20:-15]]
-    rs2=regabidict[binaryline[-25:-20]]
+    rs1=abidict[binaryline[-20:-15]]
+    rs2=abidict[binaryline[-25:-20]]
     opcode=binaryline[-7:]
     sw(rs2, rs1, imm)
 
@@ -266,8 +266,8 @@ def Stype(binaryline):
 
 def Btype(binaryline):
     imm=binaryline[0]+binaryline[-8]+binaryline[1:7]+binaryline[-12:-7]
-    rs1=regabidict[binaryline[-20:-15]]
-    rs2=regabidict[binaryline[-25:-20]]
+    rs1=abidict[binaryline[-20:-15]]
+    rs2=abidict[binaryline[-25:-20]]
     funct3=binaryline[-15:-12]
     opcode=binaryline[-7:]
     funct3dict={
@@ -299,28 +299,7 @@ def Utype(binaryline):
     lui(rd, imm)
   elif binaryline[:7] == '0010111':
     auipc(rd, imm)
-file1='file.txt'
-file2='result.txt'
-f1=open(file1,'r')
-mainlst=f1.readlines()
-for i in range(len(mainlst)):
-  mainlst[i]=mainlst[i].strip()
-f1.close()
-for i in mainlst:
-  type=instrtype(mainlst[i])
-  if type=='R':
-    Rtype(mainlst[i])
-  elif type=='I':
-    Itype(mainlst[i])
-  elif type=='S':
-    Stype(mainlst[i])
-  elif type=='B':
-    Btype(mainlst[i])
-  elif type=='U':
-    Utype(mainlst[i])
-  elif type=='J':
-    Jtype(mainlst[i])
-    
+
 
 
 file1='file.txt'
@@ -331,19 +310,19 @@ for i in range(len(mainlst)):
   mainlst[i]=mainlst[i].strip()
 f1.close()
 while mainlst[pc]!='00000000000000000000000001100011':
-  type=instrtype(mainlst[i])
+  type=instrtype(mainlst[pc])
   if type=='R':
-    Rtype(mainlst[i])
+    Rtype(mainlst[pc])
   elif type=='I':
-    Itype(mainlst[i])
+    Itype(mainlst[pc])
   elif type=='S':
-    Stype(mainlst[i])
+    Stype(mainlst[pc])
   elif type=='B':
-    Btype(mainlst[i])
+    Btype(mainlst[pc])
   elif type=='U':
-    Utype(mainlst[i])
+    Utype(mainlst[pc])
   elif type=='J':
-    Jtype(mainlst[i])
+    Jtype(mainlst[pc])
   pc+=1
 f2=open(file2,'w')
 finallist=[]
