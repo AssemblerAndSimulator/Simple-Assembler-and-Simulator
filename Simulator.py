@@ -204,5 +204,42 @@ def Itype(binaryline):
   rd=binaryline[20:25]
   opcode=binaryline[25:]
   opdict={'0000011':lw,'0010011':addi,'1100111':jalr}
+def Stype(binaryline):
+    imm=binaryline[:7]+binaryline[-12:-7]
+    rs1=regabdict[binaryline[-20:-15]]
+    rs2=regabdict[binaryline[-25:-20]]
+    opcode=binaryline[-7:]
+    sw(rs2, rs1, imm)
+def Utype(binaryline):
+    imm=binaryline[:20]
+    rd=regabdict[binaryline[-12:-7]]
+    opcode=binaryline[-7:]
+    opdict={'0110111':lui, '0010111':auipc}
+    if opcode in opdict:
+        return opdict[opcode](rd, imm)
+def Btype(binaryline):
+    imm=binaryline[0]+binaryline[-8]+binaryline[1:6]+binaryline[-12]+binary[-11:-7]+binary[6:11]+'0'
+    rs1=regabidict[binaryline[-20:-15]]
+    rs2=regabidict[regabidict[-25:-20]]
+    funct3=binaryline[-15:-12]
+    opcode=binaryline[-7:]
+    funct3dict={
+        '000': beq,
+        '001': bne,
+        '100': bge,
+        '101': bgeu,
+        '110': blt,
+        '111': bltu
+    }
+    if funct3 in funct3dict:
+        return funct3dict[funct3](rs1, rs2, imm)
+def Jtype(binaryline):
+    imm=binaryline[0]+binaryline[-20:-11]+binary[-21]+binaryline[-30:-20]+binaryline[-31]
+    opcode=binaryline[-7:]
+    opdict={'1101111':jal}
+    if opcode in opdict:
+        return opdict[opcode](imm}
+    
+    
   
 
