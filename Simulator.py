@@ -1,5 +1,6 @@
 global pc
 pc=0
+branch=False
 opcodedict = {
     'R': ['0110011'],
     'I': ['0000011', '0010011', '1100111'],
@@ -159,12 +160,9 @@ def addi(rd,rs1,imm):
   add(rd,rs1,rd)
   return
 
-
 def lw(rd,rs1,imm):
-  addi(rd,rs1,imm)
   regabidict[rd]=memory_add[rd]
   return 
-
 
 def jalr(rd,x6,imm):
   
@@ -175,23 +173,32 @@ def jalr(rd,x6,imm):
 def beq(rs1, rs2, imm):
   if regabidict[rs1] == regabidict[rs2]:
     global pc
+    global branch
     pc = pc + bin_decimal(imm) // 4
+    branch=True
 
 
 def bne(rs1, rs2, imm):
   if regabidict[rs1] != regabidict[rs2]:
     global pc
+    global branch
     pc = pc + bin_decimal(imm) // 4
+    branch=True
+
 
 def blt(rs1, rs2, imm):
     if regabidict[rs1] < regabidict[rs2]:
       global pc
+      global branch
       pc = pc + bin_decimal(imm) // 4
+      branch=True
 
 def bge(rs1, rs2, imm):
     if regabidict[rs1] > regabidict[rs2]:
       global pc
+      global branch
       pc = pc + bin_decimal(imm) // 4
+      branch=True
 
 #------------------------------Utype ---------------------------------
 def lui(rd, imm):
@@ -302,7 +309,6 @@ def Utype(binaryline):
     auipc(rd, imm)
 
 
-
 file1='file.txt'
 file2='result.txt'
 f1=open(file1,'r')
@@ -324,7 +330,8 @@ while mainlst[pc]!='00000000000000000000000001100011':
     Utype(mainlst[pc])
   elif type=='J':
     Jtype(mainlst[pc])
-  pc+=1
+  if not branch:
+    pc+=1
 f2=open(file2,'w')
 finallist=[]
 for i in regabidict:
