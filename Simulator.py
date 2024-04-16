@@ -81,9 +81,14 @@ memory_add={'00010000':'00000000000000000000000000000000',
 
 def bin_decimal(bin):
   dec = 0
+  a=bin[0]
+  bin=bin[1:]
   for i in range(0, len(bin)):
     dec += (2**i) * int(bin[len(bin) - 1 - i])
-  return dec
+  if a=='0':
+    return dec
+  else:
+    return -(2**len(bin)-dec)
 
 def bin_hex(bin):
   dict1={'0000':'0','0001':'1','0010':'2','0011':'3','0100':'4','0101':'5','0110':'6','0111':'7','1000':'8','1001':'9','1010':'a','1011':'b','1100':'c','1101':'d','1110':'e','1111':'f'}
@@ -217,8 +222,15 @@ def lw(rd,rs1,imm):
   del regabidict['temp2']
   return
 
-def jalr(rd,x6,imm):
-  
+def jalr(rd,rs,imm):
+  global pc
+  global branch
+  imm = (32 - len(imm)) * imm[0] + imm
+  regabidict[rd]=binconv(4*pc+4)
+  addi('temp3',rs,imm)
+  pc=bin_decimal(regabidict['temp3'])//4
+  del regabidict['temp3']
+  branch=True
   
   
   return
@@ -273,7 +285,12 @@ def sw(rs2,rs1,imm):
 
 #-----------------------------JType-----------------------------------------
 def jal(rd,imm):
+  global pc
+  global branch
   imm = (32 - len(imm)) * imm[0] + imm
+  regabidict[rd]=binconv(4*pc+4)
+  pc+=bin_decimal(imm)//4
+  branch=True
   return
 
 
@@ -327,7 +344,7 @@ def Stype(binaryline):
 #---------------------
 
 def Btype(binaryline):
-    imm=binaryline[0]+binaryline[-8]+binaryline[1:7]+binaryline[-12:-7]
+    imm=binaryline[0]+binaryline[-8]+binaryline[1:7]+binaryline[-12:-8]+'0'
     rs1=abidict[binaryline[-20:-15]]
     rs2=abidict[binaryline[-25:-20]]
     funct3=binaryline[-15:-12]
@@ -345,6 +362,7 @@ def Jtype(binaryline):
     imm=binaryline[0]+binaryline[-20:-12]+binaryline[-21]+binaryline[1:12]
     rd=abidict[binaryline[-12:-7]]
     jal(rd,imm)
+    
     
 #---------------------
 def Utype(binaryline):
@@ -387,13 +405,13 @@ while mainlst[pc]!='00000000000000000000000001100011':
     Jtype(mainlst[pc])
   if not branch:
     pc+=1
+  regabidict['zero']='00000000000000000000000000000000'
   binpc='0b'+binconv(pc*4)
   line=binpc
   for i in regabidict:
     line=line+" 0b"+regabidict[i]
   finallist.append(line+'\n')
   branch=False
-finallist.append(line+'\n')
 for i in memory_add:
   line='0x'+i+': 0b'+memory_add[i]+'\n'
   finallist.append(line)
