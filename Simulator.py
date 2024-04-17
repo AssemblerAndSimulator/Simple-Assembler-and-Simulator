@@ -1,4 +1,5 @@
-#FOR THE LOVE OF GOD PLEASE FIX LW AND SW
+import sys
+
 global pc
 pc=0
 branch=False
@@ -410,8 +411,8 @@ def Utype(binaryline):
     auipc(rd, imm)
 
 
-file1='file.txt'
-file2='result.txt'
+file1=sys.argv[1]
+file2=sys.argv[2]
 f1=open(file1,'r')
 mainlst=f1.readlines()
 for i in range(len(mainlst)):
@@ -444,7 +445,7 @@ while mainlst[pc]!='00000000000000000000000001100011':
   branch=False
 finallist.append(line+'\n')
 for i in memory_add:
-  line='0x'+i+': 0b'+memory_add[i]+'\n'
+  line='0x'+i+':0b'+memory_add[i]+'\n'
   finallist.append(line)
 f2.writelines(finallist)
 f2.close()
