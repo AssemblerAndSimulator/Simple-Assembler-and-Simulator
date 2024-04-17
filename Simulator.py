@@ -276,7 +276,7 @@ def bge(rs1, rs2, imm):
 
 #------------------------------Utype ---------------------------------
 def lui(rd, imm):
-  bin_pc = format(pc, '032b')
+  bin_pc = binconv(4*pc)
   regabidict['temp2']=bin_pc
   addi(rd, 'temp2', imm)
   del regabidict['temp2']
@@ -422,6 +422,7 @@ while mainlst[pc]!='00000000000000000000000001100011':
     line=line+" 0b"+regabidict[i]
   finallist.append(line+'\n')
   branch=False
+finallist.append(line+'\n')
 for i in memory_add:
   line='0x'+i+': 0b'+memory_add[i]+'\n'
   finallist.append(line)
