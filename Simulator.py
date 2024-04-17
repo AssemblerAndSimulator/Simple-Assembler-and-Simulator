@@ -275,13 +275,13 @@ def bge(rs1, rs2, imm):
       branch=True
 
 #------------------------------Utype ---------------------------------
-def lui(rd, imm):
+def auipc(rd, imm):
   bin_pc = binconv(4*pc)
   regabidict['temp2']=bin_pc
   addi(rd, 'temp2', imm)
   del regabidict['temp2']
 
-def auipc(rd, imm):
+def lui(rd, imm):
   regabidict[rd] = imm
 
 #-----------------------------S type--------------------------------------
@@ -378,11 +378,11 @@ def Jtype(binaryline):
 def Utype(binaryline):
   rd = abidict[binaryline[-12:-7]]
   imm = binaryline[-32:-12]
-
-  if imm[0] == '0':
+  imm=imm+'000000000000'
+  '''if imm[0] == '0':
     imm = '000000000000' + imm
   elif imm[0] == '1':
-    imm = '111111111111' + imm
+    imm = '111111111111' + imm'''
 
   if binaryline[-7:] == '0110111':
     lui(rd, imm)
