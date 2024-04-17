@@ -90,6 +90,13 @@ def bin_decimal(bin):
   else:
     return -(2**len(bin)-dec)
 
+def bin_dec_p(bin):
+  dec = 0
+  for i in range(0, len(bin)):
+    dec += (2**i) * int(bin[len(bin) - 1 - i])
+  return dec
+
+
 def bin_hex(bin):
   dict1={'0000':'0','0001':'1','0010':'2','0011':'3','0100':'4','0101':'5','0110':'6','0111':'7','1000':'8','1001':'9','1010':'a','1011':'b','1100':'c','1101':'d','1110':'e','1111':'f'}
   result=''
@@ -176,7 +183,7 @@ def xor(rs1, rs2, rd):
 
 def sll(rs1, rs2, rd):
   shift =(regabidict[rs2][-5:])
-  dec = bin_decimal(shift)
+  dec = bin_dec_p(shift)
   s1 = regabidict[rs1]
   s1 = s1 + ('0' * dec)
   regabidict[rd] = s1[-32:]
@@ -185,7 +192,7 @@ def sll(rs1, rs2, rd):
 
 def srl(rs1, rs2, rd):
   shift =(regabidict[rs2][-5:])
-  dec = bin_decimal(shift)
+  dec = bin_dec_p(shift)
   s1 = regabidict[rs1]
   s1 = ('0' * dec) + s1
   regabidict[rd] = s1[:32]
@@ -248,6 +255,8 @@ def bne(rs1, rs2, imm):
     global pc
     global branch
     pc = pc + bin_decimal(imm) // 4
+    print(pc)
+    print(bin(pc))
     branch=True
 
 
@@ -280,6 +289,7 @@ def sw(rs2,rs1,imm):
   imm = (32 - len(imm)) * imm[0] + imm
   addi('temp2',rs1, imm)
   memory_add[bin_hex(regabidict['temp2'])]=regabidict[rs2]
+  print(memory_add[bin_hex(regabidict['temp2'])])
   del regabidict['temp2']
   return
 
@@ -374,9 +384,9 @@ def Utype(binaryline):
   elif imm[0] == '1':
     imm = '111111111111' + imm
 
-  if binaryline[:7] == '0110111':
+  if binaryline[-7:] == '0110111':
     lui(rd, imm)
-  elif binaryline[:7] == '0010111':
+  elif binaryline[-7:] == '0010111':
     auipc(rd, imm)
 
 
