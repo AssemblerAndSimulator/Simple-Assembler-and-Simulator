@@ -160,7 +160,7 @@ def slt(rs1, rs2, rd):
     if int(regabidict[rs1]) < int(regabidict[rs2]):
       regabidict[rd] = '0' * 31 + '1'
   elif regabidict[rs1][0] == "1" and regabidict[rs2][0] == "1":
-    if int(regabidict[rs1]) > int(regabidict[rs2]):
+    if int(regabidict[rs1]) < int(regabidict[rs2]):
       regabidict[rd] = "0" * 31 + "1"
   else:
     pass
@@ -419,7 +419,7 @@ while mainlst[pc]!='00000000000000000000000001100011':
   binpc='0b'+binconv(pc*4)
   line=binpc
   for i in regabidict:
-    line=line+" 0b"+regabidict[i]
+    line=line+" "+i+" 0b"+regabidict[i]
   finallist.append(line+'\n')
   branch=False
 finallist.append(line+'\n')
