@@ -37,8 +37,8 @@ regabidict = {
     's7': '00000000000000000000000000000000',
     's8': '00000000000000000000000000000000',
     's9': '00000000000000000000000000000000',
-    's10': '00000000000000000000000000000000',
-    's11': '00000000000000000000000000000000',
+    's10':'00000000000000000000000000000000',
+    's11':'00000000000000000000000000000000',
     't3': '00000000000000000000000000000000',
     't4': '00000000000000000000000000000000',
     't5': '00000000000000000000000000000000',
@@ -255,24 +255,45 @@ def bne(rs1, rs2, imm):
     global pc
     global branch
     pc = pc + bin_decimal(imm) // 4
-    print(pc)
-    print(bin(pc))
     branch=True
 
 
 def blt(rs1, rs2, imm):
-    if regabidict[rs1] < regabidict[rs2]:
-      global pc
-      global branch
+  global pc
+  global branch
+  if (regabidict[rs1][0] == '1' and regabidict[rs2][0] == '0'):
+    pc = pc + bin_decimal(imm) // 4
+    branch=True
+  elif regabidict[rs1][0] == '0' and regabidict[rs2][0] == '0':
+    if int(regabidict[rs1]) < int(regabidict[rs2]):
       pc = pc + bin_decimal(imm) // 4
       branch=True
+  elif regabidict[rs1][0] == "1" and regabidict[rs2][0] == "1":
+    if int(regabidict[rs1]) < int(regabidict[rs2]):
+      pc = pc + bin_decimal(imm) // 4
+      branch=True
+  else:
+    pass
+  return
+
 
 def bge(rs1, rs2, imm):
-    if regabidict[rs1] > regabidict[rs2]:
-      global pc
-      global branch
+  global pc
+  global branch
+  if (regabidict[rs1][0] == '0' and regabidict[rs2][0] == '1'):
+    pc = pc + bin_decimal(imm) // 4
+    branch=True
+  elif regabidict[rs1][0] == '0' and regabidict[rs2][0] == '0':
+    if int(regabidict[rs1]) > int(regabidict[rs2]):
       pc = pc + bin_decimal(imm) // 4
       branch=True
+  elif regabidict[rs1][0] == "1" and regabidict[rs2][0] == "1":
+    if int(regabidict[rs1]) > int(regabidict[rs2]):
+      pc = pc + bin_decimal(imm) // 4
+      branch=True
+  else:
+    pass
+  return 
 
 #------------------------------Utype ---------------------------------
 def auipc(rd, imm):
@@ -289,7 +310,6 @@ def sw(rs2,rs1,imm):
   imm = (32 - len(imm)) * imm[0] + imm
   addi('temp2',rs1, imm)
   memory_add[bin_hex(regabidict['temp2'])]=regabidict[rs2]
-  print(memory_add[bin_hex(regabidict['temp2'])])
   del regabidict['temp2']
   return
 
@@ -419,7 +439,7 @@ while mainlst[pc]!='00000000000000000000000001100011':
   binpc='0b'+binconv(pc*4)
   line=binpc
   for i in regabidict:
-    line=line+" "+i+" 0b"+regabidict[i]
+    line=line+" 0b"+regabidict[i]
   finallist.append(line+'\n')
   branch=False
 finallist.append(line+'\n')
